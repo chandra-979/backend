@@ -1,0 +1,303 @@
+ <html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="http://netdna.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Arima+Madurai:100,200,300,400,500,700,800,900" rel="stylesheet">
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script>
+    $("audio").on("play", function() {
+    $("audio").not(this).each(function(index, audio) {
+        this.audio.pause();
+    });
+});
+
+  </script>
+</head>
+<body>
+
+<div class="container border">
+        <h1 class="text-center text-white bg-dark" >PROFILE</h1>
+        
+  </div>
+  <table class="table table-hover table-dark border">
+  <thead>
+    <tr>
+      <th class="text-white bg-dark" style="color: blue;"><h3>FirstName</h3></th>
+      <th class="text-white bg-dark" style="color: blue;"><h3>LastName</h3></th>
+      <th class="text-white bg-dark" style="color: blue;"><h3>Email</h3></th>
+      <th><div class="text-right">
+        <button type="submit" class="btn btn-info " (click)="logout()">Signout</button>
+      </div></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="text-white bg-dark" >
+        <h4><i>{{details.first_name}}</i></h4>
+      </td>
+      <td class="text-white bg-dark">
+        <h4><i>{{details.last_name}}</i></h4>
+      </td >
+      <h4><i>{{details.email}}</i></h4>
+    </tr>
+  </tbody>
+  </table>
+
+  <div style="text-align:center; margin-top: 100px; " class="pb"><mat-card style="margin-top:10px; width: 50%;">  
+    <mat-card-content>  
+        <ul>  
+            <li *ngFor="let file of files">  
+              <tr>
+                <td>{{file.data.name}}:</td>
+                <td>
+                <div class="progress border">
+                  <div class="progress-bar progress-bar-success progress-bar-striped border" role="progressbar"
+                  (aria-valuenow)='file.progress' aria-valuemin="0" aria-valuemax="100" style="width:100%">
+                    {{file.progress}}% Complete 
+                  </div>
+                </div>
+              </td>
+            </tr>
+            </li>  
+        </ul> 
+        <th><div *ngIf="reFlag===true" class="col-md-3"><button class="btn btn-info btn-md" style="width: 5cm;" (click)="reload()">Refresh</button></div></th>
+    </mat-card-content>  
+    <mat-card-actions>  
+      <div class="table col-sm-3">
+        <th><div class="col-md-3"><button class="btn btn-info btn-md" style="width: 5cm;" (click)="imagesDisplay()"><i class="fa fa-file-photo-o"></i></button></div></th>
+        <th><div class="col-md-3"><button class="btn btn-info btn-md" style="width: 5cm;" (click)="audioDisplay()"> <i class="fa fa-file-audio-o"></i></button></div></th>
+        <th><div class="col-md-3"><button class="btn btn-info btn-md" style="width: 5cm;" (click)="videosDisplay()"> <i class="fa fa-film"></i></button></div></th>
+        <th><div class="col-md-3"><button class="btn btn-info btn-md" style="width: 5cm;" (click)="docsDisplay()"> <i class="fa fa-file-o"></i></button></div></th>
+        <th><div class="col-md-3"><button class="btn btn-info btn-md" style="width: 5cm;" (click)="allDisplay()"> All</button></div></th>
+        <th><div class="col-md-3"><button class="btn btn-info btn-md" style="width: 5cm;" (click)="onClick()">Upload</button></div></th>  
+      </div>
+    </mat-card-actions>  
+  </mat-card><input type="file" #fileUpload id="fileUpload" name="fileUpload" multiple="multiple" accept="*" style="display:none;" />
+  </div>
+  
+
+<div *ngIf="allFlag">
+<!-- images -->
+<div class="row border" >
+  <div class="container" *ngIf="imglen===0 && imageFlag">
+    <span class="text-info"><h3><br><br>No Images Found</h3></span>
+  </div>
+  <div class="col-md-12" >
+    <div id="mdb-lightbox-ui"></div>
+    <div class="mdb-lightbox no-margin border" *ngFor="let img of images">
+      <figure class="col-md-3" >
+          <img alt="picture" [src]="img.filedata"
+            style="height: 200px;width: 200px;">
+          <h5 class="text-white-50" >{{img.OriginalName}}</h5>
+          <tr>
+            <p> <button class="btn btn-info" (click)="deleteFile(img.id,img.OriginalName)">Delete</button></p>
+          <td><button class="btn btn-info " (click)="downloadPDF(img.filename,img.contentType)"><a routerLink="http://localhost:4000/download" download></a>Download</button></td>
+          </tr>
+       </figure>
+    </div>
+  </div>
+</div>
+<script>
+// MDB Lightbox Init
+$(function () {
+$("#mdb-lightbox-ui").load("dashboard.component.html");
+});
+</script>
+  <!--videos  -->
+  <div class="row border" >
+    <div class="container" *ngIf="videolen===0 && videoFlag">
+      <span class="text-info"><h3><br><br>No Videos Found</h3></span>
+    </div>
+    <div class="col-md-12">
+      <div id="mdb-lightbox-ui"></div>
+      <div class="mdb-lightbox no-margin border" *ngFor="let img of videoes">
+        <figure class="col-md-3">
+            <video alt="picture" [src]="img.filedata"
+              style="height: 200px;width: 200px;" controls></video>
+            <h5 >{{img.OriginalName}}</h5>
+            <p> <button class="btn btn-info" (click)="deleteFile(img.id,img.OriginalName)">Delete</button></p>
+        </figure>
+      </div>
+    </div>
+  </div>
+<script>
+// MDB Lightbox Init
+$(function () {
+$("#mdb-lightbox-ui").load("dashboard.component.html");
+});
+</script>
+  <!-- audioes -->
+  <div class="row border" >
+    <div class="container" *ngIf="audiolen===0 && audioFlag">
+      <span class="text-info"><h3><br><br>No Audioes Found</h3></span>
+    </div>
+    <div class="col-md-12 border">
+      <div id="mdb-lightbox-ui"></div>
+      <div class="mdb-lightbox no-margin border" *ngFor="let img of audioes;let i=index">
+        <figure class="col-md-3 " style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRaPhTQyR22yRNXpUNX_8MaGk1Yva9evbwVIyPTWiCrgio31UTO&usqp=CAU');
+        background-repeat: no-repeat;">
+          <audio [id]="i" class="playback" alt="picture" [src]="img.filedata"
+              style="height: 200px;width: 200px;" controls preload="none"></audio>
+              
+            <h5 >{{img.OriginalName}}</h5>
+            <p> <button class="btn btn-info" (click)="deleteFile(img.id,img.OriginalName)">Delete</button></p>
+        </figure>
+      </div>
+    </div>
+  </div>
+<script>
+// MDB Lightbox Init
+$(function () {
+$("#mdb-lightbox-ui").load("dashboard.component.html");
+});
+</script>
+
+<div class="container border" *ngIf="doclen>0">
+  <table class="table table-hover border">
+      <thead>
+        <tr>
+          <th><h2>Name</h2> </th>
+          <th><h2>Link</h2></th>
+          
+          <th><h2>Delete</h2></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let file of docs">
+          <td><h4>{{ file.OriginalName }}</h4></td>
+          <td><button class="btn btn-info button" (click)="downloadPDF(file.filename,file.contentType)"><a href="localhost:4200/download" download></a>Download</button></td>
+          <td> <p> <button class="btn btn-info" (click)="deleteFile(file.id,file.OriginalName)">Delete</button></p></td>
+        </tr>  
+        
+        <tr *ngFor="let file of remains">
+          <td><h4>{{ file.OriginalName }}</h4></td>
+          <td><button class="btn btn-info button" (click)="downloadPDF(file.filename,file.contentType)"><a href="localhost:4200/download" download></a>Download</button></td> 
+          <td> <p> <button class="btn btn-info" (click)="deleteFile(file.id,file.OriginalName)">Delete</button></p></td>
+        </tr> 
+    
+      </tbody>
+    </table>
+</div>
+
+</div>
+<!-- only images -->
+<div *ngIf="imageFlag">
+<div class="row border" >
+  <div class="container" *ngIf="imglen===0 && imageFlag">
+    <span class="text-info"><h3><br><br>No Images Found</h3></span>
+  </div>
+  <div class="col-md-12 border">
+
+    <div id="mdb-lightbox-ui"></div>
+
+    <div class="mdb-lightbox no-margin border" *ngFor="let img of images">
+
+      <figure class="col-md-3">
+          <img alt="picture" [src]="img.filedata"
+            style="height: 200px;width: 200px;">
+          <h5 >{{img.OriginalName}}</h5>
+          <tr>
+          <p> <button class="btn btn-info" (click)="deleteFile(img.id,img.OriginalName)">Delete</button></p>
+          <td><button class="btn btn-info " (click)="downloadPDF(img.filename,img.contentType)"><a href="localhost:4200/download" download></a>Download</button></td>
+          </tr>
+        </figure>
+    </div>
+  </div>
+</div>
+<script>
+// MDB Lightbox Init
+$(function () {
+$("#mdb-lightbox-ui").load("dashboard.component.html");
+});
+</script>
+</div>
+<!-- only videos -->
+<div *ngIf="videoFlag">
+  <div class="row border" >
+    <div class="container" *ngIf="videolen===0 && videoFlag">
+      <span class="text-info"><h3><br><br>No Videos Found</h3></span>
+    </div>
+    <div class="col-md-12">
+      <div id="mdb-lightbox-ui"></div>
+      <div class="mdb-lightbox no-margin border" *ngFor="let img of videoes">
+        <figure class="col-md-3">
+            <video alt="picture" [src]="img.filedata"
+              style="height: 200px;width: 200px;" controls></video>
+            <h5 >{{img.OriginalName}}</h5>
+            <p> <button class="btn btn-info" (click)="deleteFile(img.id,img.OriginalName)">Delete</button></p>
+        </figure>
+      </div>
+    </div>
+  </div>
+<script>
+// MDB Lightbox Init
+$(function () {
+$("#mdb-lightbox-ui").load("dashboard.component.html");
+});
+</script></div>
+<!-- only audioes -->
+<div *ngIf="audioFlag">
+<div class="row" >
+  <div class="container" *ngIf="audiolen===0 && audioFlag">
+    <span class="text-info"><h3><br><br>No Audioes Found</h3></span>
+  </div>
+  <div class="col-md-12">
+    <div id="mdb-lightbox-ui"></div>
+    <div class="mdb-lightbox no-margin" *ngFor="let img of audioes" >
+      <figure class="col-md-3"
+      style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRaPhTQyR22yRNXpUNX_8MaGk1Yva9evbwVIyPTWiCrgio31UTO&usqp=CAU');
+        background-repeat: no-repeat;"
+      >
+          <audio alt="picture" [src]="img.filedata"
+            style="height: 200px;width: 200px;" controls></audio>
+          <h5 >{{img.OriginalName}}</h5>
+          <p> <button class="btn btn-info" (click)="deleteFile(img.id,img.OriginalName)">Delete</button></p>
+      </figure>
+    </div>
+  </div>
+</div>
+<script>
+// MDB Lightbox Init
+$(function () {
+$("#mdb-lightbox-ui").load("dashboard.component.html");
+});
+</script>
+</div>
+<div *ngIf="docFlag">
+  <div class="container border" *ngIf="doclen===0 && docFlag && remainLen===0">
+    <span class="text-info"><br><br><h3>No Documents Found</h3></span>
+  </div>
+  <div class="container border">
+    <table class="table table-hover border">
+        <thead>
+          <tr>
+            <th>File Name</th>
+            <th>Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let file of docs">
+            <td>{{ file.OriginalName }}</td>
+            <td><button class="btn btn-info button" (click)="downloadPDF(file.filename,file.contentType)"><a href="localhost:4200/download" download></a>Download</button></td> 
+            <td> <p> <button class="btn btn-info" (click)="deleteFile(file.id,file.OriginalName)">Delete</button></p></td>
+          </tr>  
+          <tr *ngFor="let file of remains">
+            <td>{{ file.OriginalName }}</td>
+            <td><button class="btn btn-info button" (click)="downloadPDF(file.filename,file.contentType)"><a href="localhost:4200/download" download></a>Download</button></td> 
+            <td> <p> <button class="btn btn-info" (click)="deleteFile(file.id,file.OriginalName)">Delete</button></p></td>
+          </tr> 
+        </tbody>
+      </table>
+  </div>
+  
+
+</div>
+
+
+</body>
+ </html>
